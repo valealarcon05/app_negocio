@@ -76,7 +76,65 @@ app.post('/actividades', (req, res) => {
       }
     });
   });
-  
+
+// Consultar Actividades por Usuario
+app.get('/actividades/:usuario_id', (req, res) => {
+  const { usuario_id } = req.params;
+
+  const query = `SELECT * FROM actividades WHERE usuario_id = ?`;
+
+  db.all(query, [usuario_id], (err, rows) => {
+    if (err) {
+      res.status(500).send('Error al consultar actividades');
+    } else {
+      res.status(200).send(rows);
+    }
+  });
+});
+
+// Filtrar Actividades por Tipo
+app.get('/actividades', (req, res) => {
+  const { tipo } = req.query;  // Consulta usando parámetros de la URL
+
+  let query = `SELECT * FROM actividades`;
+  const params = [];
+
+  if (tipo) {
+    query += ` WHERE tipo = ?`;
+    params.push(tipo);  // Si hay un tipo, se agrega a la consulta
+  }
+
+  db.all(query, params, (err, rows) => {
+    if (err) {
+      res.status(500).send('Error al filtrar actividades');
+    } else {
+      res.status(200).send(rows);
+    }
+  });
+});
+
+// Consultar Actividades por Rango de Fechas
+app.get('/actividades/rango', (req, res) => {
+  const { desde, hasta } = req.query;
+
+  // Verifica que ambas fechas estén presentes
+  if (!desde || !hasta) {
+    return res.status(400).send('Faltan parámetros de fecha');
+  }
+
+  const query = `
+    SELECT * FROM actividades 
+    WHERE fecha BETWEEN ? AND ?
+  `;
+
+  db.all(query, [desde, hasta], (err, rows) => {
+    if (err) {
+      res.status(500).send('Error al consultar rango de actividades');
+    } else {
+      res.status(200).send(rows);
+    }
+  });
+});
 
 // Iniciar servidor
 app.listen(PORT, () => {
