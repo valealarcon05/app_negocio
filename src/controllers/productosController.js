@@ -33,9 +33,9 @@ const registrarProducto = (req, res) => {
 const consultarProductos = (req, res) => {
   try {
     const stmt = db.prepare('SELECT * FROM productos');
-    const rows = stmt.all();
+    const productos = stmt.all();
 
-    res.status(200).json(rows);
+    res.status(200).json(productos);
   } catch (err) {
     console.error('Error al consultar productos:', err.message);
     res.status(500).json({
@@ -109,7 +109,6 @@ const eliminarProducto = (req, res) => {
   }
 };
 
-// Exportar todas las funciones
 module.exports = {
   registrarProducto,
   consultarProductos,
