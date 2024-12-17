@@ -18,7 +18,8 @@ db.prepare(`
   CREATE TABLE IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     usuario TEXT NOT NULL UNIQUE,
-    contrasena TEXT NOT NULL
+    contrasena TEXT NOT NULL,
+    rol TEXT NOT NULL DEFAULT 'empleado'  -- Valores posibles: "admin", "empleado"
   )
 `).run();
 

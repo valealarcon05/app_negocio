@@ -1,6 +1,6 @@
 const express = require('express');
 const { check, validationResult } = require('express-validator');
-const { registrarProducto, consultarProductos } = require('../controllers/productosController');
+const { registrarProducto, consultarProductos, consultarStock } = require('../controllers/productosController');
 const verificarToken = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -12,7 +12,7 @@ router.post(
   [
     check('nombre').notEmpty().withMessage('El nombre del producto es obligatorio'),
     check('descripcion').optional().isString(),
-    check('stock').optional().isInt().withMessage('El stock debe ser un número entero')
+    check('stock').optional().isInt().withMessage('El stock debe ser un número entero'),
   ],
   (req, res, next) => {
     const errors = validationResult(req);
@@ -25,6 +25,9 @@ router.post(
 );
 
 // Consultar Productos
-router.get('/', consultarProductos);
+router.get('/', verificarToken, consultarProductos);
+
+// Consultar Stock Total de Productos
+router.get('/stock', verificarToken, consultarStock);
 
 module.exports = router;
